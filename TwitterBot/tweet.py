@@ -32,9 +32,21 @@ def limit_handler(cursor):
         print('I am done')
 
 
-# for follower in limit_handler(tweepy.Cursor(api.followers).items()):
-#     follower.follow()
-#     print(follower.name)
+search = ''
+numberOfTweets = 2
+
+for tweet in tweepy.Cursor(api.search, search).items(numberOfTweets):
+    try:
+        tweet.favorite()
+        print('Retweeted the tweet')
+    except tweepy.TweepError as e:
+        print(e.reason)
+    except StopIteration:
+        break
+
+
+for follower in limit_handler(tweepy.Cursor(api.followers).items()):
+    follower.follow()
 
 # public_tweets = api.home_timeline()
 # for tweet in public_tweets:
