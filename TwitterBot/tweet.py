@@ -1,4 +1,5 @@
 import tweepy
+import time
 
 
 def getKeysNTokens(doc):
@@ -18,7 +19,23 @@ auth = tweepy.OAuthHandler(keys[0], keys[1])
 auth.set_access_token(keys[2], keys[3])
 
 api = tweepy.API(auth)
+user = api.me()
 
-public_tweets = api.home_timeline()
-for tweet in public_tweets:
-    print(tweet.text)
+
+def limit_handler(cursor):
+    try:
+        while True:
+            yield cursor.next()
+    except tweepy.RateLimitError:
+        time.sleep(1000)
+    except StopIteration:
+        print('I am done')
+
+
+# for follower in limit_handler(tweepy.Cursor(api.followers).items()):
+#     follower.follow()
+#     print(follower.name)
+
+# public_tweets = api.home_timeline()
+# for tweet in public_tweets:
+#     print(tweet.text)
